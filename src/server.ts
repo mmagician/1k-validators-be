@@ -68,6 +68,7 @@ export default class Server {
             offlineSince: candidate.offlineSince,
             offlineAccumulated: candidate.offlineAccumulated,
             rank: candidate.rank,
+            extNominations: candidate.extNominations,
             faults: candidate.faults,
             invalidityReasons: candidate.invalidityReasons,
             unclaimedEras: candidate.unclaimedEras,

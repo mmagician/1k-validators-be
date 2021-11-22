@@ -167,6 +167,17 @@ class ChainData {
     return [ledger.toJSON().active, null];
   };
 
+  getAllNominatorsMap = async (
+    eraIndex: number,
+    validator: string
+  ): Promise<any> => {
+    const api = await this.handler.getApi();
+    if (!api.isConnected) {
+      logger.warn(`{Chaindata::API::Warn} API is not connected, returning...`);
+      return;
+    }
+  };
+
   getOwnExposure = async (
     eraIndex: number,
     validator: string

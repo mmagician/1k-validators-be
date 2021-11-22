@@ -290,6 +290,12 @@ export class OTV implements Constraints {
     });
     const rankStats = getStats(rankValues);
 
+    // External Nomination
+    const extNominationValues = validCandidates.map((candidate) => {
+      return candidate.extNominations ? candidate.extNominations : 0;
+    });
+    const extNominationStats = getStats(extNominationValues);
+
     // Unclaimed Rewards
     const unclaimedValues = validCandidates.map((candidate) => {
       return candidate.unclaimedEras && candidate.unclaimedEras.length
@@ -316,6 +322,8 @@ export class OTV implements Constraints {
       this.OFFLINE_WEIGHT,
       rankStats,
       this.RANK_WEIGHT,
+      extNominationStats,
+      this.EXT_NOMINATION_WEIGHT,
       unclaimedStats,
       this.UNCLAIMED_WEIGHT,
       Date.now()
@@ -358,6 +366,13 @@ export class OTV implements Constraints {
       const scaledFaults = scaled(candidate.faults, faultsValues);
       const faultsScore = (1 - scaledFaults) * this.FAULTS_WEIGHT;
 
+      const scaledExtNominations = scaled(
+        candidate.extNominations,
+        extNominationValues
+      );
+      const extNominationsScore =
+        scaledExtNominations & this.EXT_NOMINATION_WEIGHT;
+
       const aggregate =
         inclusionScore +
         spanInclusionScore +
@@ -379,6 +394,7 @@ export class OTV implements Constraints {
         discovered: discoveredScore,
         nominated: nominatedScore,
         rank: rankScore,
+        extNominations: extNominationsScore,
         unclaimed: unclaimedScore,
         bonded: bondedScore,
         faults: faultsScore,
@@ -397,6 +413,7 @@ export class OTV implements Constraints {
         score.discovered,
         score.nominated,
         score.rank,
+        score.extNominations,
         score.unclaimed,
         score.bonded,
         score.faults,
@@ -408,6 +425,7 @@ export class OTV implements Constraints {
         aggregate: score,
         discoveredAt: candidate.discoveredAt,
         rank: candidate.rank,
+        extNominations: candidate.extNominations,
         unclaimedEras: candidate.unclaimedEras,
         inclusion: candidate.inclusion,
         spanInclusion: candidate.spanInclusion,
@@ -439,13 +457,14 @@ export class OTV implements Constraints {
   // unclaimed eras - lower is preferrable
   // inclusion - lower is preferrable
   // bonded - higher is preferrable
-  INCLUSION_WEIGHT = 40;
-  SPAN_INCLUSION_WEIGHT = 40;
+  INCLUSION_WEIGHT = 35;
+  SPAN_INCLUSION_WEIGHT = 35;
   DISCOVERED_WEIGHT = 5;
   NOMINATED_WEIGHT = 10;
   RANK_WEIGHT = 5;
+  EXT_NOMINATION_WEIGHT = 10;
   UNCLAIMED_WEIGHT = 15;
-  BONDED_WEIGHT = 13;
+  BONDED_WEIGHT = 10;
   FAULTS_WEIGHT = 5;
   OFFLINE_WEIGHT = 2;
 

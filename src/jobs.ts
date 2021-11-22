@@ -3,6 +3,7 @@ import ChainData from "./chaindata";
 import logger from "./logger";
 import { checkUnclaimed, OTV } from "./constraints";
 import Monitor from "./monitor";
+import Nominator from "./nominator";
 
 // Runs Monitor Job
 export const monitorJob = async (db: Db, monitor: Monitor) => {
@@ -292,6 +293,39 @@ export const activeValidatorJob = async (
 
   logger.info(
     `{cron::ActiveValidatorJob::ExecutionTime} started at ${new Date(
+      start
+    ).toString()} Done. Took ${(end - start) / 1000} seconds`
+  );
+};
+
+export const extNominationsJob = async (
+  db: Db,
+  chaindata: ChainData,
+  nominatorGroups: Array<Nominator[]>
+) => {
+  const start = Date.now();
+  const currentEra = await chaindata.getCurrentEra();
+  const allCandidates = await db.allCandidates();
+
+  for (const candidate of allCandidates) {
+    const selfStake = await chaindata.getNominationAt(
+      candidate.stash,
+      currentEra,
+      db
+    );
+    // TODO need a method to fetch all nominators (active + inactive) as a map from controller -> amount. Then, exclude our nominators from nominatorGroups, and finally sum up the results
+    const nominationMap = await chaindata.getAllNominatorsMap(
+      currentEra,
+      candidate.stash
+    );
+  }
+  // TODO set the updated record in DB
+  // await db.setActive(candidate.stash, active);
+
+  const end = Date.now();
+
+  logger.info(
+    `{cron::ExtNominationsJob::ExecutionTime} started at ${new Date(
       start
     ).toString()} Done. Took ${(end - start) / 1000} seconds`
   );

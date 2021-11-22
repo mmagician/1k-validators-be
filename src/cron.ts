@@ -22,6 +22,7 @@ import {
   ERA_STATS_CRON,
   KUSAMA_FOUR_DAYS_ERAS,
   POLKADOT_FOUR_DAYS_ERAS,
+  EXT_NOMINATIONS_CRON,
 } from "./constants";
 import logger from "./logger";
 import Monitor from "./monitor";
@@ -43,6 +44,7 @@ import {
   sessionKeyJob,
   unclaimedErasJob,
   validatorPrefJob,
+  extNominationsJob,
   validityJob,
 } from "./jobs";
 
@@ -672,4 +674,39 @@ export const startValidatorPrefJob = async (
     running = false;
   });
   validatorPrefCron.start();
+};
+
+// Chron job for fetching external nominations
+export const startExtNominationsJob = async (
+  config: Config,
+  db: Db,
+  chaindata: ChainData,
+  nominatorGroups: Array<Nominator[]>
+) => {
+  const extNominationsFrequency = config.cron.extNominations
+    ? config.cron.extNominations
+    : EXT_NOMINATIONS_CRON;
+
+  logger.info(
+    `(cron::ExtNominationsJob::init) Running validator pref cron with frequency: ${extNominationsFrequency}`
+  );
+
+  let running = false;
+
+  const extNominationsCron = new CronJob(extNominationsFrequency, async () => {
+    if (running) {
+      return;
+    }
+    running = true;
+    logger.info(
+      `{cron::ExtNominationsJob::start} running external nominations fetch job....`
+    );
+
+    const candidates = await db.allCandidates();
+
+    // Run the external nominations job
+    await extNominationsJob(db, chaindata, nominatorGroups);
+    running = false;
+  });
+  extNominationsCron.start();
 };

@@ -395,6 +395,20 @@ export const ValidatorScoreMetadataSchema = new Schema({
     standardDeviation: Number,
   },
   rankWeight: Number,
+  // External Nominations Metadata
+  extNominationsStats: {
+    values: [Number],
+    absoluteMin: Number,
+    absoluteMax: Number,
+    q10: Number,
+    q25: Number,
+    q50: Number,
+    q75: Number,
+    q90: Number,
+    mean: Number,
+    standardDeviation: Number,
+  },
+  extNominationsWeight: Number,
   // Unclaimed Metadata
   unclaimedStats: {
     values: [Number],

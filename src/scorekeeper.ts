@@ -28,6 +28,7 @@ import {
   startEraPointsJob,
   startEraStatsJob,
   startExecutionJob,
+  startExtNominationsJob,
   startInclusionJob,
   startMonitorJob,
   startRewardClaimJob,
@@ -523,6 +524,12 @@ export default class ScoreKeeper {
       startSessionKeyJob(this.config, this.db, this.chaindata);
       startUnclaimedEraJob(this.config, this.db, this.chaindata);
       startValidatorPrefJob(this.config, this.db, this.chaindata);
+      startExtNominationsJob(
+        this.config,
+        this.db,
+        this.chaindata,
+        this.nominatorGroups
+      );
       if (this.claimer) {
         startRewardClaimJob(
           this.config,

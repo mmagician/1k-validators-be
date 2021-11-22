@@ -45,6 +45,7 @@ export type Config = {
     sessionKey: string;
     unclaimedEras: string;
     validatorPref: string;
+    extNominations: string;
   };
   db: {
     mongo: {

@@ -123,5 +123,8 @@ export const UNCLAIMED_ERAS_CRON = "0 0-59/30 * * * *";
 // Validator Pref Cron Job. This runs ever 15 minutes by default
 export const VALIDATOR_PREF_CRON = "0 0-59/15 * * * *";
 
+// External Nominations Cron Job. This runs ever 30 minutes by default
+export const EXT_NOMINATIONS_CRON = "0 0-59/30 * * * *";
+
 // Sesion Key Cron Job. This runs ever 45 minutes by default
 export const SESSION_KEY_CRON = "0 0-59/45 * * * *";
